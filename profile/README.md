@@ -1,3 +1,1 @@
-<p align="center">
-  <img width="500" height="223" alt="project-banner" src="assets/banner.svg" />
-</p>
+![Profile Banner](../assets/banner.svg)
