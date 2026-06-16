@@ -1,1 +1,1 @@
-![Profile Banner](../assets/banner.svg)
+![Profile Banner](../assets/banner.jpg)
