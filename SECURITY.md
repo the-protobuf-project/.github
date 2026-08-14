@@ -1,0 +1,120 @@
+# Security Policy
+
+This policy applies to all repositories in The Protobuf Project organization.
+
+The Protobuf Project is code-generation tooling: plugins that read Protobuf definitions and emit source code, schemas, and migrations. That shapes what counts as a vulnerability here — see [Scope](#scope) before reporting.
+
+## Reporting a Vulnerability
+
+**Do not open a public issue for a security report.**
+
+Use GitHub's private vulnerability reporting on the affected repository: **Security → Report a vulnerability**. This is the preferred channel — it gives us a private fork to develop the fix in and issues the advisory and CVE at the end.
+
+If that is unavailable to you, email **security@the-protobuf-project.org**. PGP key: `<FINGERPRINT>` (available at `https://the-protobuf-project.org/.well-known/security.txt`).
+
+### What to include
+
+- Affected repository, module path, and version or commit SHA
+- A minimal `.proto` file and plugin invocation that reproduces the issue
+- The generated output demonstrating the problem, where relevant
+- Impact: what an attacker gains, and what access they need to get it
+- Any proposed fix
+
+Reports in any language are fine.
+
+## What to Expect
+
+This project is maintained by a small team. These targets are what we can honour, not what sounds impressive.
+
+| Stage | Target |
+|---|---|
+| Acknowledgement of your report | 3 business days |
+| Initial severity assessment | 10 business days |
+| Fix for Critical / High | 30 days |
+| Fix for Medium / Low | Next scheduled release |
+| Public advisory | Within 7 days of the fix release |
+
+We follow a **90-day coordinated disclosure window**. If we have not shipped a fix within 90 days of acknowledging your report, you are free to disclose publicly. We will ask for an extension if a fix is genuinely in flight, and we will not ask twice.
+
+We publish advisories through the GitHub Advisory Database, which propagates to OSV. If you want credit, tell us the name and link to use; if you want anonymity, say so.
+
+We do not operate a paid bug bounty. We do credit reporters in the advisory and in release notes.
+
+## Scope
+
+### In scope
+
+**Generated output**
+- Generated code containing injection-prone constructs — unparameterized queries, unescaped identifiers, unsafe deserialization
+- Generated code that silently ignores a declared constraint or annotation (for example, a write path that bypasses a declared audit or access rule)
+- Secrets, credentials, or classified field values leaked into generated code, logs, or trace attributes
+- Generated migrations that grant broader database privileges than the schema declares
+
+**Plugin binaries**
+- Path traversal or arbitrary file write when emitting output
+- Arbitrary code execution, panic, or unbounded resource consumption triggered by a crafted `.proto` file or `CodeGeneratorRequest`
+- Bypass of the FIPS build mode assertion in `cryptopolicy`
+
+**Supply chain**
+- Compromised, unsigned, or unverifiable release artifacts
+- Build provenance that does not match the published source
+- Reachable vulnerabilities in pinned dependencies
+
+### Out of scope
+
+- **Insecure user-authored schemas.** A `.proto` file that declares an unsafe design generates code matching that design. Report it if the tooling should have rejected or warned about the schema — that is a real finding — but not simply because unsafe input produced unsafe output.
+- **Documented unsafe configuration.** Options explicitly marked as escape hatches, used as documented.
+- **Downstream ORM and library vulnerabilities.** Issues in GORM, Prisma, or database drivers belong upstream. Tell us anyway and we will coordinate and pin around it.
+- **Example, demo, and fixture code**, which is marked as not production-ready.
+- **Automated scanner output with no demonstrated exploit path.** We will read it, but it is not a vulnerability report until reachability is shown.
+- Missing hardening headers, best-practice deviations, or theoretical weaknesses without impact.
+
+## Supported Versions
+
+Security fixes are provided for the versions below. `<PLACEHOLDER — fill in per repo before publishing.>`
+
+| Repository | Version | Supported until |
+|---|---|---|
+| `store` | `<x.y>` | `<DATE>` |
+| `protokit` | `<x.y>` | `<DATE>` |
+| `protoc-gen-cache` | `<x.y>` | `<DATE>` |
+
+Each release line receives security fixes for **18 months from its release date**, or until superseded by two subsequent minor versions, whichever is longer. Pre-1.0 modules receive fixes on the latest minor version only.
+
+This constitutes our declared support period. We will announce any change at least 90 days before it takes effect.
+
+## Identifying Affected Generated Code
+
+Because this project generates code that then lives in your repository, a fix on our side does not fix your checked-in output. Every generated file carries a provenance header naming the generator module path and version:
+
+```go
+// Code generated by <module>@<version>. DO NOT EDIT.
+```
+
+When we publish an advisory, it names the affected generator versions. Search your tree for that header to find files requiring regeneration. Advisories state explicitly whether regeneration is required or whether a dependency bump is sufficient.
+
+## Verifying Releases
+
+All release artifacts are signed with [Sigstore](https://sigstore.dev) and carry SLSA build provenance:
+
+```sh
+cosign verify-blob \
+  --certificate-identity-regexp 'https://github.com/the-protobuf-project/.*' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+  --signature <artifact>.sig \
+  --certificate <artifact>.pem \
+  <artifact>
+
+gh attestation verify <artifact> --owner the-protobuf-project
+```
+
+SBOMs are published with every release in SPDX 2.3 and CycloneDX 1.6 formats.
+
+## Regulatory Notes
+
+**EU Cyber Resilience Act.** For actively exploited vulnerabilities, we notify ENISA and the relevant national CSIRT within 24 hours of becoming aware, independently of the disclosure timeline above. Our role under the Regulation is stated in [`compliance/CRA-role.md`](https://github.com/the-protobuf-project/compliance/blob/main/CRA-role.md).
+
+**IEC 62304 / MDR / FDA.** Per-repository SOUP declarations, including known-anomaly lists, are published in the [`compliance`](https://github.com/the-protobuf-project/compliance) repository for use in medical device software documentation.
+
+---
+Last reviewed: `14-08-2026`. Reviewed at least annually.
