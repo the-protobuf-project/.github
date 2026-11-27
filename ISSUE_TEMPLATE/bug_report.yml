@@ -1,0 +1,54 @@
+name: Bug report
+description: Something generated wrongly, crashed, or doesn't match the docs.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. **Security issues go through [SECURITY.md](https://github.com/the-protobuf-project/.github/blob/main/SECURITY.md), not here.**
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you expected, and what you got instead.
+    validations:
+      required: true
+  - type: textarea
+    id: proto
+    attributes:
+      label: Minimal .proto that reproduces it
+      description: The smallest schema that still shows the problem.
+      render: protobuf
+  - type: textarea
+    id: command
+    attributes:
+      label: How you ran it
+      description: The protoc/buf command, buf.gen.yaml, or plugin options.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Output or error
+      description: The relevant generated code, error message, or log.
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Output of `protoc-gen-<name> --version`, or the library version / commit SHA.
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options: [macOS, Linux, Windows, Other]
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and this hasn't been reported.
+          required: true

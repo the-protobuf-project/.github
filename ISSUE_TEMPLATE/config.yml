@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/the-protobuf-project/.github/blob/main/SECURITY.md
+    about: Please do not report vulnerabilities in public issues. Follow the security policy instead.
+  - name: Documentation
+    url: https://the-protobuf-project.org/ecosystem
+    about: Every project's documentation, and the editor showing real generated output.
+  - name: Getting help
+    url: https://github.com/the-protobuf-project/.github/blob/main/SUPPORT.md
+    about: Where each kind of question gets answered fastest.
